@@ -1,5 +1,6 @@
 import os
 import argparse
+from prompts import system_prompt
 from dotenv import load_dotenv
 from openai import OpenAI
  
@@ -17,15 +18,17 @@ parser.add_argument("--verbose", action="store_true", help = "Enable verbose out
 args = parser.parse_args()
 
 messages=[
+            {"role": "system","content": system_prompt},
             {"role": "user","content": args.user_prompt}
-                    ]
+        ]
 def main():
     print("Hello from ai-agent!")
     if api_key == None:
         raise RuntimeError("No API-Key was found in .env")
     response = client.chat.completions.create(
         model = "openrouter/free", 
-        messages=messages)
+        messages=messages,
+        temperature=0)
     
     if response == None:
             raise RuntimeError("Response not available - None Tokens left mayhaps?")
