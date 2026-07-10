@@ -1,9 +1,10 @@
 import os
+import json
 import argparse
 from prompts import system_prompt
+from call_function import available_functions
 from dotenv import load_dotenv
 from openai import OpenAI
- 
 
 load_dotenv()
 api_key = os.environ.get("OPENROUTER_API_KEY")
@@ -21,6 +22,7 @@ messages=[
             {"role": "system","content": system_prompt},
             {"role": "user","content": args.user_prompt}
         ]
+
 def main():
     print("Hello from ai-agent!")
     if api_key == None:
@@ -28,11 +30,18 @@ def main():
     response = client.chat.completions.create(
         model = "openrouter/free", 
         messages=messages,
+        tools=available_functions,
         temperature=0)
-    
+    message = response.choices[0].message
+
     if response == None:
             raise RuntimeError("Response not available - None Tokens left mayhaps?")
     
+    if message.tool_calls:
+         for call in message.tool_calls:
+              function_args = json.loads(call.function.arguments or '{}')
+              print(f'Calling function: {call.function.name}({function_args})')
+
     if args.verbose:
         print(f'User prompt: {args.user_prompt}') 
         print(f'Prompt tokens: {response.usage.prompt_tokens}')
@@ -40,6 +49,9 @@ def main():
         print(response.choices[0].message.content)
     else: 
         print(response.choices[0].message.content)
-        
+    
+
 if __name__ == "__main__":
     main()
+
+

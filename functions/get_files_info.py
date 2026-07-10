@@ -1,5 +1,21 @@
 import os 
-from functions.path_validation import validate_path
+
+schema_get_files_info = {
+    "type": "function",
+    "function": {
+        "name": "get_files_info",
+        "description": "Lists files in a specified directory relative to the working directory, providing file size and directory status",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "directory": {
+                    "type": "string",
+                    "description": "Directory path to list files from, relative to the working directory (default is the working directory itself)",
+                },
+            },
+        },
+    },
+}
 
 def get_files_info(working_directory:str, directory: str = ".") -> str:
     try:
@@ -22,7 +38,7 @@ def get_files_info(working_directory:str, directory: str = ".") -> str:
             print(ent_det)
         for ent in ent_det: 
             return f'- {ent[0]}: file_size={ent[1]}, is_dir={ent[2]}'
-        
+        return ent_det
     except Exception as e:
             return f'Error: {e}'
 
