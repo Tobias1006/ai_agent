@@ -14,7 +14,6 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
         
         if '/' in file_path:
             dirs_in_path = file_path.rsplit('/')
-            print(dirs_in_path[0])
             os.makedirs(dirs_in_path[0], exist_ok=True)
         with open(full_path, "w") as f:
             f.write(content)
