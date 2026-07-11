@@ -3,6 +3,7 @@ import json
 import argparse
 from prompts import system_prompt
 from call_function import available_functions
+from call_function import call_function
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -35,22 +36,18 @@ def main():
     message = response.choices[0].message
 
     if response == None:
-            raise RuntimeError("Response not available - None Tokens left mayhaps?")
+        raise RuntimeError("Response not available - None Tokens left mayhaps?")
     
     if message.tool_calls:
-         for call in message.tool_calls:
-              function_args = json.loads(call.function.arguments or '{}')
-              print(f'Calling function: {call.function.name}({function_args})')
-
-    if args.verbose:
-        print(f'User prompt: {args.user_prompt}') 
-        print(f'Prompt tokens: {response.usage.prompt_tokens}')
-        print(f'Response tokens: {response.usage.completion_tokens}')
-        print(response.choices[0].message.content)
-    else: 
-        print(response.choices[0].message.content)
+        for call in message.tool_calls:
+            result_message = call_function(call)
+            if result_message['content'] == '':
+                raise Exception('Error: No content received from the tool call')
+            if args.verbose:
+                print(f"-> {result_message['content']}")
+            else:
+                print(f"{result_message['content']}")
     
-
 if __name__ == "__main__":
     main()
 

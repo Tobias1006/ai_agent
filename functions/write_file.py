@@ -1,5 +1,27 @@
 import os
 
+schema_write_file = {
+    "type": "function",
+    "function": {
+        "name": "write_file",
+        "description": "Writes and overwrites files.",
+        "parameters": {
+            "required": ["content", "file_path"],
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Name of the file to be written to, contains the format (.pdf, .xslx. ...)",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Content to be written to the specified file.",
+                }
+            },
+        },
+    },
+}
+
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     try: 
         path_work_dir = os.path.abspath(working_directory)
