@@ -11,6 +11,7 @@ class Calculator:
             "*": lambda a, b: a * b,
             "/": lambda a, b: a / b,
         }
+        # Corrected precedence: '+' and '-' have lower precedence (1), '*' and '/' higher (2)
         self.precedence: dict[str, int] = {
             "+": 1,
             "-": 1,

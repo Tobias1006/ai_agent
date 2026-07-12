@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 import argparse
@@ -26,29 +27,38 @@ messages=[
 
 def main():
     print("Hello from ai-agent!")
-    if api_key == None:
-        raise RuntimeError("No API-Key was found in .env")
-    response = client.chat.completions.create(
-        model = "openrouter/free", 
-        messages=messages,
-        tools=available_functions,
-        temperature=0)
-    message = response.choices[0].message
+    for i in range(20):
+        if api_key == None:
+            raise RuntimeError("No API-Key was found in .env")
+        response = client.chat.completions.create(
+            model = "openrouter/free", 
+            messages=messages,
+            tools=available_functions,
+            temperature=0)
+        message = response.choices[0].message
+        messages.append(message)
 
-    if response == None:
-        raise RuntimeError("Response not available - None Tokens left mayhaps?")
-    
-    if message.tool_calls:
-        for call in message.tool_calls:
-            result_message = call_function(call)
-            if result_message['content'] == '':
-                raise Exception('Error: No content received from the tool call')
-            if args.verbose:
-                print(f"-> {result_message['content']}")
-            else:
-                print(f"{result_message['content']}")
-    
+        if response == None:
+            raise RuntimeError("Response not available - None Tokens left mayhaps?")
+        
+        if message.tool_calls:
+            for call in message.tool_calls:
+                result_message = call_function(call)
+                if result_message['content'] == '':
+                    raise Exception('Error: No content received from the tool call')
+                if args.verbose:
+                    print(f"-> {result_message['content']}")
+                else:
+                    print(f"{result_message['content']}")
+                messages.append(result_message)
+
+        if not message.tool_calls:
+            return message.content
+                
+        if i == 19:
+            sys.exit(1)
+
 if __name__ == "__main__":
-    main()
+    print(main())
 
 

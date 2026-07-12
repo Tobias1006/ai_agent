@@ -35,9 +35,8 @@ def get_files_info(working_directory:str, directory: str = ".") -> str:
         for ent in list_of_files:
             path_ent = os.path.join(full_path, ent)
             ent_det.append((path_ent, os.path.getsize(path_ent), os.path.isdir(path_ent)))
-            print(ent_det)
         for ent in ent_det: 
-            return f'- {ent[0]}: file_size={ent[1]}, is_dir={ent[2]}'
+            print(f'- {ent[0]}: file_size={ent[1]}, is_dir={ent[2]}')
         return ent_det
     except Exception as e:
             return f'Error: {e}'
